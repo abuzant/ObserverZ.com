@@ -1,0 +1,38 @@
+# Frontend Dockerfile for ObserverZ.com
+# Multi-stage build for optimal image size
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build the frontend
+RUN pnpm build:client
+
+# Production stage - using lightweight web server
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install a simple HTTP server
+RUN npm install -g serve
+
+# Copy built frontend from builder
+COPY --from=builder /app/client/dist ./dist
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3001 || exit 1
+
+# Expose port
+EXPOSE 3001
+
+# Start the server
+CMD ["serve", "-s", "dist", "-l", "3001"]
+

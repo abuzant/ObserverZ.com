@@ -1,0 +1,120 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: observerz-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-observerz}
+      POSTGRES_USER: ${DB_USER:-observerz}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-observerz_secure_password_change_me}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-observerz}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - observerz-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: observerz-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - observerz-network
+
+  # Backend API Server
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: observerz-backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: postgresql://${DB_USER:-observerz}:${DB_PASSWORD:-observerz_secure_password_change_me}@postgres:5432/${DB_NAME:-observerz}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key_change_me}
+      VITE_APP_ID: ${VITE_APP_ID}
+      OAUTH_SERVER_URL: ${OAUTH_SERVER_URL}
+      VITE_OAUTH_PORTAL_URL: ${VITE_OAUTH_PORTAL_URL}
+      OWNER_OPEN_ID: ${OWNER_OPEN_ID}
+      OWNER_NAME: ${OWNER_NAME}
+      VITE_APP_TITLE: ${VITE_APP_TITLE:-ObserverZ.com}
+      VITE_APP_LOGO: ${VITE_APP_LOGO}
+      BUILT_IN_FORGE_API_URL: ${BUILT_IN_FORGE_API_URL}
+      BUILT_IN_FORGE_API_KEY: ${BUILT_IN_FORGE_API_KEY}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./server:/app/server
+      - ./drizzle:/app/drizzle
+      - ./shared:/app/shared
+    networks:
+      - observerz-network
+    restart: unless-stopped
+
+  # Frontend Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: observerz-frontend
+    environment:
+      VITE_API_URL: http://backend:3000
+      VITE_APP_TITLE: ${VITE_APP_TITLE:-ObserverZ.com}
+      VITE_APP_LOGO: ${VITE_APP_LOGO}
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    depends_on:
+      - backend
+    volumes:
+      - ./client/src:/app/client/src
+      - ./client/public:/app/client/public
+    networks:
+      - observerz-network
+    restart: unless-stopped
+
+  # Optional: Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: observerz-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - observerz-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  observerz-network:
+    driver: bridge
+
