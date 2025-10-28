@@ -161,7 +161,7 @@ Generation Z users who value:
 
 ```bash
 # Clone the repository
-git clone https://github.com/abuzant/ObserverZ.git
+git clone https://github.com/abuzant/ObserverZ.com.git 
 cd observerz
 
 # Copy environment template
@@ -604,7 +604,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 - **Documentation**: https://observerz.com
 - **Email**: ruslan@observerz.com
-- **Issues**: https://github.com/observerz/issues
+- **Issues**: https://github.com/ObserverZ.com/issues
 
 ---
 
