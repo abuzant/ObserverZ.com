@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-height, initial-scale=1.0">
+    <title>ObserverZ Diagrams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .diagram {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .diagram::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #ff006e);
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #00d4ff;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .box {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            min-width: 180px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .box:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+        
+        .box-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+        
+        .box-desc {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+        
+        .arrow {
+            color: #7b2cbf;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .metric {
+            background: rgba(123,44,191,0.1);
+            border-left: 4px solid #7b2cbf;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #00d4ff;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        
+        .tech-badge {
+            background: rgba(255,0,110,0.15);
+            border: 1px solid rgba(255,0,110,0.4);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff006e;
+        }
+        
+        .layer {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1));
+            border: 2px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+        
+        .layer-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        
+        .layer-content {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        svg {
+            width: 100%;
+            height: auto;
+            margin: 30px 0;
+        }
+        
+        .node {
+            transition: all 0.3s ease;
+        }
+        
+        .node:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .diagram {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            .flow {
+                flex-direction: column;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px 10px 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Slide 1: System Architecture -->
+        <div class="diagram" id="slide1">
+            <h1>ObserverZ Architecture</h1>
+            <p class="subtitle">Dual-Engine Content Curation System</p>
+            
+            <div class="flow">
+                <div class="box">
+                    <div class="box-title">🌐 Sources</div>
+                    <div class="box-desc">RSS Feeds<br>Manual URLs<br>Email Funnel</div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="box">
+                    <div class="box-title">⚙️ Data Engine</div>
+                    <div class="box-desc">Fetch • Parse<br>Tag • Rank<br>Graph Build</div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="box">
+                    <div class="box-title">💾 Storage</div>
+                    <div class="box-desc">PostgreSQL<br>Redis Cache<br>S3 Assets</div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="box">
+                    <div class="box-title">🎨 Presentation</div>
+                    <div class="box-desc">Next.js SSR<br>Tag Pages<br>Journals</div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="box">
+                    <div class="box-title">👤 Users</div>
+                    <div class="box-desc">Browse<br>Curate<br>Share</div>
+                </div>
+            </div>
+            
+            <div class="tech-stack">
+                <div class="tech-badge">FastAPI</div>
+                <div class="tech-badge">Next.js 15</div>
+                <div class="tech-badge">PostgreSQL</div>
+                <div class="tech-badge">Redis</div>
+                <div class="tech-badge">Celery</div>
+                <div class="tech-badge">NetworkX</div>
+                <div class="tech-badge">KeyBERT</div>
+            </div>
+            
+            <button class="download-btn" onclick="downloadSlide('slide1', 'observerz-architecture.png')">📥 Download Image</button>
+        </div>
+
+        <!-- Slide 2: Data Pipeline -->
+        <div class="diagram" id="slide2">
+            <h1>Ingestion Pipeline</h1>
+            <p class="subtitle">From Raw Content to Ranked Knowledge</p>
+            
+            <svg viewBox="0 0 800 400">
+                <!-- Fetcher -->
+                <g class="node">
+                    <rect x="50" y="50" width="120" height="80" rx="10" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="2"/>
+                    <text x="110" y="90" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">Fetcher</text>
+                    <text x="110" y="110" text-anchor="middle" fill="#aaa" font-size="12">HTTP + Robots</text>
+                </g>
+                
+                <!-- Parser -->
+                <g class="node">
+                    <rect x="220" y="50" width="120" height="80" rx="10" fill="rgba(123,44,191,0.2)" stroke="#7b2cbf" stroke-width="2"/>
+                    <text x="280" y="90" text-anchor="middle" fill="#7b2cbf" font-size="16" font-weight="bold">Parser</text>
+                    <text x="280" y="110" text-anchor="middle" fill="#aaa" font-size="12">Clean + Extract</text>
+                </g>
+                
+                <!-- Tagger -->
+                <g class="node">
+                    <rect x="390" y="50" width="120" height="80" rx="10" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="450" y="90" text-anchor="middle" fill="#ff006e" font-size="16" font-weight="bold">Tagger</text>
+                    <text x="450" y="110" text-anchor="middle" fill="#aaa" font-size="12">NLP + NER</text>
+                </g>
+                
+                <!-- Graph -->
+                <g class="node">
+                    <rect x="560" y="50" width="120" height="80" rx="10" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="2"/>
+                    <text x="620" y="90" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">GraphQ</text>
+                    <text x="620" y="110" text-anchor="middle" fill="#aaa" font-size="12">Relationships</text>
+                </g>
+                
+                <!-- Ranker -->
+                <g class="node">
+                    <rect x="305" y="200" width="140" height="80" rx="10" fill="rgba(123,44,191,0.2)" stroke="#7b2cbf" stroke-width="2"/>
+                    <text x="375" y="235" text-anchor="middle" fill="#7b2cbf" font-size="16" font-weight="bold">Ranker</text>
+                    <text x="375" y="255" text-anchor="middle" fill="#aaa" font-size="12">Clicks + Freshness</text>
+                </g>
+                
+                <!-- De-dup -->
+                <g class="node">
+                    <rect x="305" y="310" width="140" height="60" rx="10" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="375" y="345" text-anchor="middle" fill="#ff006e" font-size="16" font-weight="bold">De-duplication</text>
+                </g>
+                
+                <!-- Arrows -->
+                <path d="M 170 90 L 220 90" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <path d="M 340 90 L 390 90" stroke="#7b2cbf" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <path d="M 510 90 L 560 90" stroke="#ff006e" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <path d="M 620 130 L 620 160 L 375 160 L 375 200" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <path d="M 375 280 L 375 310" stroke="#7b2cbf" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#00d4ff"/>
+                    </marker>
+                </defs>
+            </svg>
+            
+            <div class="code-block">
+hot_score = log(1 + clicks_72h) + exp(-Δt/36h) + source_weight + boost_ttl
+            </div>
+            
+            <button class="download-btn" onclick="downloadSlide('slide2', 'observerz-pipeline.png')">📥 Download Image</button>
+        </div>
+
+        <!-- Slide 3: Caching Strategy -->
+        <div class="diagram" id="slide3">
+            <h1>Three-Tier Caching Strategy</h1>
+            <p class="subtitle">Sub-50ms Response Times at Scale</p>
+            
+            <div class="layer">
+                <div class="layer-title">🌍 Layer 1: Edge CDN (Cloudflare)</div>
+                <div class="layer-content">
+                    <strong>Cache-Control:</strong> public, max-age=900, stale-while-revalidate=60<br>
+                    <strong>Purge:</strong> Surrogate-Key invalidation (tag:ai, gallery:tech)<br>
+                    <strong>Hit Rate:</strong> ~85% for public pages
+                </div>
+            </div>
+            
+            <div class="layer">
+                <div class="layer-title">⚡ Layer 2: Redis Cache</div>
+                <div class="layer-content">
+                    <strong>Key Pattern:</strong> v1:{type}:{id}:{params_hash}<br>
+                    <strong>TTL:</strong> 15min default, configurable per module<br>
+                    <strong>Use Case:</strong> API responses, related-tags, ranking data
+                </div>
+            </div>
+            
+            <div class="layer">
+                <div class="layer-title">💾 Layer 3: PostgreSQL + Indexes</div>
+                <div class="layer-content">
+                    <strong>GIN Indexes:</strong> Full-text search on articles.title + excerpt<br>
+                    <strong>Composite:</strong> (tag_id, created_at), (article_id, created_at)<br>
+                    <strong>Query Time:</strong> p95 < 50ms for tag feeds
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="metric">
+                    <div class="metric-value">< 250ms</div>
+                    <div class="metric-label">Gallery API p95</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">CDN Hit Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">< 50ms</div>
+                    <div class="metric-label">Tag Feed Query</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">Target Uptime</div>
+                </div>
+            </div>
+            
+            <button class="download-btn" onclick="downloadSlide('slide3', 'observerz-caching.png')">📥 Download Image</button>
+        </div>
+
+        <!-- Slide 4: Graph Relationships -->
+        <div class="diagram" id="slide4">
+            <h1>Topic Graph Engine</h1>
+            <p class="subtitle">PMI-Scored Relationship Discovery</p>
+            
+            <svg viewBox="0 0 800 500">
+                <!-- Central node -->
+                <g class="node">
+                    <circle cx="400" cy="250" r="60" fill="rgba(0,212,255,0.3)" stroke="#00d4ff" stroke-width="3"/>
+                    <text x="400" y="255" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold">AI</text>
+                </g>
+                
+                <!-- Connected nodes -->
+                <g class="node">
+                    <circle cx="250" cy="150" r="45" fill="rgba(123,44,191,0.2)" stroke="#7b2cbf" stroke-width="2"/>
+                    <text x="250" y="155" text-anchor="middle" fill="#fff" font-size="14">Machine Learning</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="550" cy="150" r="45" fill="rgba(123,44,191,0.2)" stroke="#7b2cbf" stroke-width="2"/>
+                    <text x="550" y="155" text-anchor="middle" fill="#fff" font-size="14">Neural Networks</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="200" cy="350" r="40" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="200" y="355" text-anchor="middle" fill="#fff" font-size="13">GPT</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="600" cy="350" r="40" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="600" y="355" text-anchor="middle" fill="#fff" font-size="13">Deep Learning</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="400" cy="80" r="35" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="400" y="85" text-anchor="middle" fill="#fff" font-size="12">ChatGPT</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="120" cy="250" r="35" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="120" y="255" text-anchor="middle" fill="#fff" font-size="12">LLMs</text>
+                </g>
+                
+                <g class="node">
+                    <circle cx="680" cy="250" r="35" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+                    <text x="680" y="255" text-anchor="middle" fill="#fff" font-size="12">Transformers</text>
+                </g>
+                
+                <!-- Edges with weights -->
+                <line x1="400" y1="250" x2="250" y2="150" stroke="#00d4ff" stroke-width="3" opacity="0.6"/>
+                <text x="315" y="190" fill="#00d4ff" font-size="12" font-weight="bold">0.87</text>
+                
+                <line x1="400" y1="250" x2="550" y2="150" stroke="#00d4ff" stroke-width="3" opacity="0.6"/>
+                <text x="485" y="190" fill="#00d4ff" font-size="12" font-weight="bold">0.82</text>
+                
+                <line x1="400" y1="250" x2="200" y2="350" stroke="#7b2cbf" stroke-width="2" opacity="0.5"/>
+                <text x="290" y="310" fill="#7b2cbf" font-size="12" font-weight="bold">0.65</text>
+                
+                <line x1="400" y1="250" x2="600" y2="350" stroke="#7b2cbf" stroke-width="2" opacity="0.5"/>
+                <text x="510" y="310" fill="#7b2cbf" font-size="12" font-weight="bold">0.71</text>
+                
+                <line x1="400" y1="250" x2="400" y2="80" stroke="#ff006e" stroke-width="2" opacity="0.4"/>
+                <text x="410" y="160" fill="#ff006e" font-size="12" font-weight="bold">0.58</text>
+                
+                <line x1="400" y1="250" x2="120" y2="250" stroke="#ff006e" stroke-width="2" opacity="0.4"/>
+                <text x="250" y="240" fill="#ff006e" font-size="12" font-weight="bold">0.54</text>
+                
+                <line x1="400" y1="250" x2="680" y2="250" stroke="#ff006e" stroke-width="2" opacity="0.4"/>
+                <text x="550" y="240" fill="#ff006e" font-size="12" font-weight="bold">0.61</text>
+            </svg>
+            
+            <div class="code-block">
+score = 0.5·cooc_7d + 0.2·pmi + 0.3·engagement<br>
+pmi = log₂(P(A,B) / P(A)·P(B))
+            </div>
+            
+            <button class="download-btn" onclick="downloadSlide('slide4', 'observerz-graph.png')">📥 Download Image</button>
+        </div>
+
+        <!-- Slide 5: Key Metrics -->
+        <div class="diagram" id="slide5">
+            <h1>Performance Metrics</h1>
+            <p class="subtitle">Built for Scale & Speed</p>
+            
+            <div class="grid">
+                <div class="metric">
+                    <div class="metric-value">7-30d</div>
+                    <div class="metric-label">Content Freshness Window</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">72h</div>
+                    <div class="metric-label">Click Ranking Window</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">τ ≈ 36h</div>
+                    <div class="metric-label">Freshness Decay Constant</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">10min</div>
+                    <div class="metric-label">Related Tags Cache TTL</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">< 5m</div>
+                    <div class="metric-label">Ingestion Latency</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">Top 25</div>
+                    <div class="metric-label">Related Tag Results</div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 50px;">Tech Stack Overview</h2>
+            
+            <div class="flow">
+                <div class="box">
+                    <div class="box-title">Backend</div>
+                    <div class="box-desc">FastAPI (Python)<br>Celery Workers<br>PostgreSQL 15</div>
+                </div>
+                
+                <div class="box">
+                    <div class="box-title">NLP Engine</div>
+                    <div class="box-desc">KeyBERT<br>spaCy NER<br>NetworkX</div>
+                </div>
+                
+                <div class="box">
+                    <div class="box-title">Frontend</div>
+                    <div class="box-desc">Next.js 15<br>React Server<br>Tailwind CSS</div>
+                </div>
+                
+                <div class="box">
+                    <div class="box-title">Infrastructure</div>
+                    <div class="box-desc">Redis Cache<br>Cloudflare CDN<br>Docker + Terraform</div>
+                </div>
+            </div>
+            
+            <button class="download-btn" onclick="downloadSlide('slide5', 'observerz-metrics.png')">📥 Download Image</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        async function downloadSlide(slideId, filename) {
+            const slide = document.getElementById(slideId);
+            const buttons = slide.querySelectorAll('.download-btn');
+            
+            // Hide buttons temporarily
+            buttons.forEach(btn => btn.style.display = 'none');
+            
+            try {
+                const canvas = await html2canvas(slide, {
+                    backgroundColor: '#0a0a0a',
+                    scale: 2,
+                    logging: false,
+                    width: slide.offsetWidth,
+                    height: slide.offsetHeight
+                });
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('Screenshot failed. Try right-click > Save Image As instead.');
+            } finally {
+                // Show buttons again
+                buttons.forEach(btn => btn.style.display = 'inline-block');
+            }
+        }
+        
+        // Add hover effects to SVG nodes
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                this.style.opacity = '0.8';
+            });
+            node.addEventListener('mouseleave', function() {
+                this.style.opacity = '1';
+            });
+        });
+    </script>
+</body>
+</html>
