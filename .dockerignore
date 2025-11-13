@@ -1,0 +1,85 @@
+# Dependencies
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+build
+.next
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs
+README.md
+CHANGELOG.md
+LICENSE
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+__tests__
+__mocks__
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporary files
+tmp
+temp
+*.tmp
+.cache
+
+# SSL certificates (for development)
+ssl
+*.pem
+*.crt
+*.key
+
+# Misc
+.prettierrc
+.prettierignore
+.eslintrc
+.eslintignore
+tsconfig.json
+vitest.config.ts
