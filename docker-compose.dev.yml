@@ -1,0 +1,80 @@
+# ============================================================================
+# ObserverZ.com - Development Docker Compose
+# ============================================================================
+# Use this for local development with hot-reload
+# Run: docker-compose -f docker-compose.dev.yml up
+# ============================================================================
+
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: observerz-postgres-dev
+    environment:
+      POSTGRES_DB: ${DB_NAME:-observerz}
+      POSTGRES_USER: ${DB_USER:-observerz}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-observerz_dev_password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-observerz}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - observerz-dev-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: observerz-redis-dev
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - observerz-dev-network
+    restart: unless-stopped
+
+volumes:
+  postgres_dev_data:
+    name: observerz_postgres_dev_data
+  redis_dev_data:
+    name: observerz_redis_dev_data
+
+networks:
+  observerz-dev-network:
+    name: observerz_dev_network
+    driver: bridge
+
+# ============================================================================
+# USAGE INSTRUCTIONS
+# ============================================================================
+# 1. Start services:
+#    docker-compose -f docker-compose.dev.yml up -d
+#
+# 2. Install dependencies on host machine:
+#    pnpm install
+#
+# 3. Run database migrations:
+#    pnpm db:push
+#
+# 4. Start development server on host:
+#    pnpm dev
+#
+# 5. Access application:
+#    http://localhost:3000 (or whatever port is auto-detected)
+#
+# 6. Stop services:
+#    docker-compose -f docker-compose.dev.yml down
+# ============================================================================
